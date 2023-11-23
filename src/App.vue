@@ -21,21 +21,20 @@ onMounted(() => {
 
 const currentColor = computed(() => Color.fromHex(currentColorHex.value));
 
-function getSimilarityRate(color: Color): number | undefined {
-  if (currentColor.value == null) return undefined;
-  return color.similarityRate(currentColor.value);
-}
-
 const filtered = computed(() => {
   const results: SearchResult[] = [];
   for (const color of colors.value) {
     results.push({
       color: color,
-      similarityRate: (currentColor.value != null) ? color.similarityRate(currentColor.value) : 0,
+      // similarityRate: (currentColor.value != null) ? color.similarityRate(currentColor.value) : 0,
+      delta: (currentColor.value != null) ? color.delta(currentColor.value) : undefined,
     } as SearchResult);
   }
   results.sort((a, b) => {
-    return b.similarityRate - a.similarityRate;
+    if (a.delta != undefined && b.delta != undefined) {
+      return a.delta - b.delta;
+    }
+    return 0;
   });
   return results;
 });
@@ -45,7 +44,6 @@ const filtered = computed(() => {
   <div class="app">
     <div class="row row-filter">
       <input type="text" v-model="currentColorHex" />
-      <div class="color-block"></div>
     </div>
     <div class="row row-results">
       <color-block v-for="result in filtered" :value="result" :key="result.color.hex"/>
@@ -53,21 +51,33 @@ const filtered = computed(() => {
   </div>
 </template>
 
+<style lang="less">
+body {
+  margin: 0;
+}
+</style>
+
 <style scoped lang="less">
 .app {
+  width: 100%;
   display: flex;
   flex-direction: column;
+
+  background-color: v-bind(currentColorHex);
 
   .row {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    margin-top: 8px;
   }
 
   .row-filter {
-    margin-bottom: 10px;
-    
+    input {
+      width: 100px;
+    }
+
     .color-block {
       width: 16px;
       height: 16px;
@@ -80,7 +90,7 @@ const filtered = computed(() => {
   .row-results {
     width: 100%;
     flex-wrap: wrap;
-    justify-content: start;
+    justify-content: center;
   }
 }
 </style>

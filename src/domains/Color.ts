@@ -35,32 +35,27 @@ export default class Color {
   }
 
   delta(other: Color): number {
-    let sum = 0;
-    sum += Math.abs(this.r - other.r);
-    sum += Math.abs(this.g - other.g);
-    sum += Math.abs(this.b - other.b);
-    return sum;
+    return this.deltaValue(other.r, other.g, other.b);
   }
 
   deltaValue(r: number, g: number, b: number): number {
-    let sum = 0;
-    sum += Math.abs(this.r - r);
-    sum += Math.abs(this.g - g);
-    sum += Math.abs(this.b - b);
-    return sum;
+    const dr = this.r - r;
+    const dg = this.g - g;
+    const db = this.b - b;
+    return Math.sqrt(dr*dr + dg*dg + db*db);
   }
 
-  similarityRate(other: Color): number {
-    const total = 255 * 3;
-    const similarity = total - this.delta(other);
-    return similarity * 1.0 / total;
-  }
+  // similarityRate(other: Color): number {
+  //   const total = 195075;
+  //   const similarity = total - this.deltaValue(other.r, other.g, other.b); 
+  //   return similarity * 1.0 / total;
+  // }
 
-  similarityRateValue(r: number, g: number, b: number): number {
-    const total = 255 * 3;
-    const similarity = total - this.deltaValue(r, g, b);
-    return similarity * 1.0 / total;
-  }
+  // similarityRateValue(r: number, g: number, b: number): number {
+  //   const total = 195075;
+  //   const similarity = total - this.deltaValue(r, g, b);
+  //   return similarity * 1.0 / total;
+  // }
 
   static fromHex(hex: string, name?: string): Color | null {
     let r = 0;

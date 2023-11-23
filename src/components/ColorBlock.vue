@@ -9,8 +9,7 @@ const props = defineProps<{
 const color = computed(() => props.value.color);
 
 const fontColor = computed(() => {
-  const simRateBlack = color.value.similarityRateValue(0, 0, 0);
-  if (simRateBlack >= 0.5) {
+  if (color.value.r < 128 && color.value.g < 128 && color.value.b < 128) {
     return "#ffffff";
   }
   return "#000000";
@@ -20,10 +19,11 @@ const bgColor = computed(() => {
   return color.value.hex;
 })
 
-const similarityRate = computed(() => {
-  if (props.value.similarityRate == 0) return undefined;
-  const percent = (props.value.similarityRate * 100).toFixed(2);
-  return `${percent}%`;
+const delta = computed(() => {
+  if (props.value.delta == undefined) {
+    return undefined;
+  }
+  return props.value.delta.toFixed(2);
 });
 </script>
 
@@ -31,7 +31,7 @@ const similarityRate = computed(() => {
   <div class="search-result">
     <div class="name">{{ color.name }}</div>
     <div class="hex">{{ color.hex }}</div>
-    <div class="similarity-rate" v-if="similarityRate != undefined">{{ similarityRate }}</div>
+    <div class="delta" v-if="delta != undefined">{{ delta }}</div>
   </div>
 </template>
 
@@ -48,5 +48,10 @@ const similarityRate = computed(() => {
 
   justify-content: center;
   align-items: center;
+
+  margin: 8px;
+  // border: 1px solid;
+  box-shadow: 1px 1px 10px black;
+  border-radius: 10px;
 }
 </style>
